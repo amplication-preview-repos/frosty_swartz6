@@ -1,0 +1,51 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Stock {
+  createdAt DateTime  @default(now())
+  date      DateTime?
+  id        String    @id @default(cuid())
+  produit   Produit?  @relation(fields: [produitId], references: [id])
+  produitId String?
+  quantit   Int?
+  updatedAt DateTime  @updatedAt
+}
+
+model Produit {
+  createdAt   DateTime @default(now())
+  description String?
+  id          String   @id @default(cuid())
+  nom         String?
+  prix        Float?
+  quantit     Int?
+  stocks      Stock[]
+  updatedAt   DateTime @updatedAt
+  ventes      Vente[]
+}
+
+model Facture {
+  createdAt     DateTime  @default(now())
+  date          DateTime?
+  id            String    @id @default(cuid())
+  montantTotale Float?
+  updatedAt     DateTime  @updatedAt
+  vente         Vente?    @relation(fields: [venteId], references: [id])
+  venteId       String?
+}
+
+model Vente {
+  createdAt DateTime  @default(now())
+  date      DateTime?
+  factures  Facture[]
+  id        String    @id @default(cuid())
+  produit   Produit?  @relation(fields: [produitId], references: [id])
+  produitId String?
+  quantit   Int?
+  updatedAt DateTime  @updatedAt
+}
